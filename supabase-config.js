@@ -1,4 +1,11 @@
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+let createClient;
+
+try {
+  ({ createClient } = await import('https://esm.sh/@supabase/supabase-js@2'));
+} catch (primaryErr) {
+  console.warn('Primary CDN failed, trying fallback:', primaryErr);
+  ({ createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'));
+}
 
 export const supabase = createClient(
   'https://ziwinletlvzulddqnbno.supabase.co',

@@ -150,10 +150,16 @@
       try {
         // Dynamic import of supabase client
         const { supabase } = await import('./supabase-config.js');
-        const { error } = await supabase.from('questions').insert([{
+
+        const insertPromise = supabase.from('questions').insert([{
           name: askName.value.trim(),
           question: askQuestion.value.trim()
         }]);
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Request timed out — check your internet connection')), 15000)
+        );
+
+        const { error } = await Promise.race([insertPromise, timeoutPromise]);
 
         if (error) throw error;
 
@@ -164,9 +170,13 @@
 
       } catch (err) {
         console.error('Submit error:', err);
-        askForm.classList.add('hidden');
+        const errMsg = document.getElementById('ask-error-msg');
+        if (errMsg) {
+          errMsg.textContent = 'Error: ' + (err && err.message ? err.message : String(err));
+        }
         askError.classList.remove('hidden');
         askSuccess.classList.add('hidden');
+        askForm.classList.remove('hidden');
       } finally {
         submitBtn.textContent = 'Submit Question';
         submitBtn.disabled = false;

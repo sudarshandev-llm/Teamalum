@@ -6,6 +6,18 @@
     {
       "source": "/supabase-config.js",
       "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/script.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/(index|admin)\\.html",
+      "headers": [
         { "key": "Cache-Control", "value": "no-cache" }
       ]
     }
