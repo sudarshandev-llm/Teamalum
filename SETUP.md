@@ -215,12 +215,13 @@ from public.page_views
 where created_at >= date_trunc('week', now()) - interval '7 days';
 ```
 
-> **Note on views + RLS:** Postgres views created by the table owner bypass RLS
-> for that owner. To let your Supabase role use them safely through PostgREST,
-> grant select:
+> **Note on views + RLS:** The analytics views are created with
+> `security_invoker = true`, so they apply the invoking role's RLS on the
+> underlying tables (they never bypass RLS). They are then granted to the
+> `authenticated` role via PostgREST:
 > ```sql
-> grant select on public.question_stats to authenticated;
-> grant select on public.daily_visits   to authenticated;
+> grant select on public.question_stats   to authenticated;
+> grant select on public.daily_visits     to authenticated;
 > grant select on public.visits_this_week to authenticated;
 > ```
 

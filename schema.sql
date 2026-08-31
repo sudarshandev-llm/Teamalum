@@ -143,7 +143,9 @@ using (exists (
 -- 5. VIEWS (analytics)
 -- ============================================================
 
-create or replace view public.question_stats as
+-- security_invoker keeps the invoking role's RLS on the underlying tables
+create or replace view public.question_stats
+with (security_invoker = true) as
 select
   count(*) filter (where not answered)          as open_count,
   count(*) filter (where answered)              as answered_count,
@@ -155,7 +157,8 @@ select
   )::numeric, 2)                                as avg_response_hours
 from public.questions;
 
-create or replace view public.daily_visits as
+create or replace view public.daily_visits
+with (security_invoker = true) as
 select
   (created_at at time zone 'utc')::date as day,
   count(*)                              as visits
@@ -163,7 +166,8 @@ from public.page_views
 group by day
 order by day;
 
-create or replace view public.visits_this_week as
+create or replace view public.visits_this_week
+with (security_invoker = true) as
 select count(*) as visits
 from public.page_views
 where created_at >= date_trunc('week', now()) - interval '7 days';
