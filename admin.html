@@ -3,818 +3,430 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
   <title>Team Alum — Admin</title>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800&family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* ==================== VARIABLES ==================== */
+    /* ==================== BRAND ==================== */
     :root {
-      --bg-base: #EDEAF6;
-      --bg-secondary: #E4F3EA;
-      --accent-lavender: #B9AEE8;
-      --accent-mint: #9FE3C0;
-      --accent-peach: #F7C9A6;
-      --text-primary: #2E2A3D;
-      --text-secondary: #6E6784;
-      --shadow-dark: rgba(163, 155, 210, 0.45);
-      --shadow-light: rgba(255, 255, 255, 0.9);
-      --success: #6FCF97;
+      --navy-900: #081426;
+      --navy-800: #0B1F3A;
+      --navy-700: #102A4C;
+      --navy-600: #1B3A63;
+      --navy-500: #2B4F80;
+      --gold-400: #E5C158;
+      --gold-500: #C9A227;
+      --gold-600: #A9881E;
+      --ink: #14213D;
+      --body: #F4F6FA;
+      --surface: #FFFFFF;
+      --surface-2: #EEF1F7;
+      --line: #DDE2EC;
+      --text-strong: #0B1F3A;
+      --text-mute: #6C7688;
+      --success: #2E7D5B;
+      --danger: #C0392B;
       --font-heading: 'Fraunces', 'Poppins', sans-serif;
-      --font-ui: 'Poppins', sans-serif;
+      --font-ui: 'Poppins', 'Inter', sans-serif;
       --font-body: 'Inter', 'Plus Jakarta Sans', sans-serif;
-      --neo-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
-      --neo-inset: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
-      --clay-shadow: 8px 8px 20px var(--shadow-dark), -8px -8px 20px var(--shadow-light), 0 0 0 1px rgba(255,255,255,0.15);
-      --radius-md: 20px;
-      --radius-card: 32px;
-      --radius-pill: 50px;
+      --radius: 14px;
+      --shadow: 0 1px 2px rgba(11,31,58,0.06), 0 8px 24px rgba(11,31,58,0.08);
     }
 
-    /* ==================== RESET ==================== */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     html, body {
       min-height: 100vh;
       font-family: var(--font-body);
-      color: var(--text-primary);
-      background: var(--bg-base);
+      color: var(--text-strong);
+      background: var(--body);
       -webkit-font-smoothing: antialiased;
     }
 
     h1, h2, h3, h4 { font-family: var(--font-heading); line-height: 1.2; }
     a { color: inherit; text-decoration: none; }
     button { cursor: pointer; border: none; background: none; font-family: inherit; }
-
-    .sr-only {
-      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
-    }
-
-    /* ==================== LAYOUT ==================== */
-    .admin-wrap {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 40px 20px 60px;
-    }
-
-    /* ==================== AUTH CARD ==================== */
-    .auth-card {
-      max-width: 420px;
-      margin: 120px auto 0;
-      text-align: center;
-      background: var(--bg-base);
-      border-radius: var(--radius-card);
-      box-shadow: var(--clay-shadow);
-      padding: 48px 36px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .auth-card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 40%;
-      background: linear-gradient(180deg, rgba(255,255,255,0.35) 0%, transparent 100%);
-      border-radius: var(--radius-card) var(--radius-card) 0 0;
-      pointer-events: none;
-    }
-
-    .auth-card h2 {
-      font-size: 1.6rem;
-      margin-bottom: 8px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .auth-card p {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      margin-bottom: 28px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .google-btn {
-      font-family: var(--font-ui);
-      font-weight: 600;
-      font-size: 0.95rem;
-      letter-spacing: 0.04em;
-      padding: 14px 36px;
-      border-radius: var(--radius-pill);
-      background: var(--accent-lavender);
-      color: #fff;
-      box-shadow: 6px 6px 16px var(--shadow-dark), -4px -4px 12px var(--shadow-light),
-                  inset 0 2px 0 rgba(255,255,255,0.25);
-      transition: all 0.25s ease;
-      border: none;
-      cursor: pointer;
-      position: relative;
-      z-index: 1;
-    }
-
-    .google-btn:hover {
-      transform: scale(1.03) translateY(-2px);
-      box-shadow: 8px 8px 22px var(--shadow-dark), -6px -6px 16px var(--shadow-light),
-                  inset 0 2px 0 rgba(255,255,255,0.3);
-    }
-
-    .google-btn:active {
-      transform: scale(0.98);
-      box-shadow: var(--neo-inset);
-    }
-
-    .denied-msg {
-      color: #e57373;
-      font-size: 0.9rem;
-      margin-top: 16px;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* ==================== DASHBOARD ==================== */
-    .dash-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .dash-header h1 {
-      font-size: clamp(1.4rem, 3vw, 2rem);
-    }
-
-    .dash-meta {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .dash-email {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      font-family: var(--font-ui);
-    }
-
-    .signout-btn {
-      font-family: var(--font-ui);
-      font-weight: 600;
-      font-size: 0.78rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      padding: 8px 20px;
-      border-radius: var(--radius-pill);
-      background: var(--bg-base);
-      color: var(--text-secondary);
-      box-shadow: 4px 4px 10px var(--shadow-dark), -4px -4px 10px var(--shadow-light);
-      transition: all 0.25s ease;
-    }
-
-    .signout-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
-      color: var(--text-primary);
-    }
-
-    .signout-btn:active {
-      transform: translateY(0);
-      box-shadow: var(--neo-inset);
-    }
-
-    /* ==================== STATS ==================== */
-    .stats-row {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
-
-    .stat-card {
-      flex: 1;
-      min-width: 220px;
-      background: var(--bg-base);
-      border-radius: var(--radius-card);
-      box-shadow: var(--clay-shadow);
-      padding: 22px 28px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .stat-card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 35%;
-      background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 100%);
-      border-radius: var(--radius-card) var(--radius-card) 0 0;
-      pointer-events: none;
-    }
-
-    .stat-label {
-      display: block;
-      font-family: var(--font-ui);
-      font-weight: 600;
-      font-size: 0.72rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text-secondary);
-      position: relative;
-      z-index: 1;
-    }
-
-    .stat-value {
-      display: block;
-      font-family: var(--font-heading);
-      font-weight: 700;
-      font-size: clamp(1.8rem, 4vw, 2.4rem);
-      line-height: 1.15;
-      margin-top: 4px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .stat-value.loading { color: var(--text-secondary); opacity: 0.6; }
-
-    .stat-refresh {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: var(--bg-base);
-      box-shadow: 3px 3px 8px var(--shadow-dark), -3px -3px 8px var(--shadow-light);
-      color: var(--text-secondary);
-      font-size: 1rem;
-      line-height: 1;
-      transition: all 0.2s ease;
-      z-index: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .stat-refresh:hover { color: var(--text-primary); transform: translateY(-1px); }
-    .stat-refresh:active { box-shadow: var(--neo-inset); transform: translateY(0); }
-    .stat-refresh.spinning { animation: stat-spin 0.7s linear infinite; }
-
-    @keyframes stat-spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    /* Filter tabs */
-    .filter-bar {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-      align-items: center;
-    }
-
-    .filter-tab {
-      font-family: var(--font-ui);
-      font-weight: 600;
-      font-size: 0.75rem;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      padding: 8px 16px;
-      border-radius: var(--radius-pill);
-      background: var(--bg-base);
-      color: var(--text-secondary);
-      box-shadow: 3px 3px 8px var(--shadow-dark), -3px -3px 8px var(--shadow-light);
-      transition: all 0.2s ease;
-    }
-
-    .filter-tab:hover {
-      transform: translateY(-1px);
-      color: var(--text-primary);
-    }
-
-    .filter-tab.active {
-      box-shadow: var(--neo-inset);
-      background: var(--accent-lavender);
-      color: #fff;
-    }
-
-    .new-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 22px;
-      height: 22px;
-      padding: 0 6px;
-      border-radius: 11px;
-      background: var(--accent-peach);
-      color: var(--text-primary);
-      font-family: var(--font-ui);
-      font-weight: 700;
-      font-size: 0.7rem;
-      margin-left: 4px;
-    }
-
-    /* Question cards */
-    .questions-list {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .question-card {
-      background: var(--bg-base);
-      border-radius: var(--radius-card);
-      box-shadow: var(--clay-shadow);
-      padding: 24px 28px;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.25s ease;
-    }
-
-    .question-card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 30%;
-      background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 100%);
-      border-radius: var(--radius-card) var(--radius-card) 0 0;
-      pointer-events: none;
-    }
-
-    .question-card.answered {
-      opacity: 0.55;
-    }
-
-    .question-card.answered:hover {
-      opacity: 0.8;
-    }
-
-    .q-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .q-name {
-      font-family: var(--font-heading);
-      font-weight: 700;
-      font-size: 1.05rem;
-    }
-
-    .q-status {
-      font-family: var(--font-ui);
-      font-weight: 600;
-      font-size: 0.68rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 4px 12px;
-      border-radius: var(--radius-pill);
-    }
-
-    .q-status.new {
-      background: var(--accent-mint);
-      color: var(--text-primary);
-    }
-
-    .q-status.answered-badge {
-      background: var(--bg-secondary);
-      color: var(--text-secondary);
-    }
-
-    .q-text {
-      font-size: 0.95rem;
-      line-height: 1.6;
-      color: var(--text-secondary);
-      margin-bottom: 12px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .q-time {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      opacity: 0.7;
-      margin-bottom: 14px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .q-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      position: relative;
-      z-index: 1;
-    }
-
-    .q-btn {
-      font-family: var(--font-ui);
-      font-weight: 600;
-      font-size: 0.72rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      padding: 7px 16px;
-      border-radius: var(--radius-pill);
-      background: var(--bg-base);
-      color: var(--text-secondary);
-      box-shadow: 3px 3px 8px var(--shadow-dark), -3px -3px 8px var(--shadow-light);
-      transition: all 0.2s ease;
-    }
-
-    .q-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 4px 4px 10px var(--shadow-dark), -4px -4px 10px var(--shadow-light);
-      color: var(--text-primary);
-    }
-
-    .q-btn:active {
-      box-shadow: var(--neo-inset);
-      transform: translateY(0);
-    }
-
-    .q-btn.copy-btn {
-      background: var(--accent-lavender);
-      color: #fff;
-    }
-
-    .q-btn.copy-btn:hover { color: #fff; }
-
-    .q-btn.mark-btn {
-      background: var(--accent-mint);
-      color: var(--text-primary);
-    }
-
+    input, textarea, select { font-family: inherit; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
     .hidden { display: none !important; }
 
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--text-secondary);
-      font-size: 0.95rem;
+    /* ==================== AUTH ==================== */
+    .auth-wrap {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(1200px 600px at 70% -10%, var(--navy-600), var(--navy-800) 60%, var(--navy-900));
+      padding: 24px;
     }
+    .auth-card {
+      width: 100%; max-width: 400px; background: var(--surface); border-radius: 20px;
+      padding: 40px 36px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.35);
+    }
+    .auth-logo { font-family: var(--font-heading); font-weight: 800; font-size: 1.5rem; color: var(--navy-800); }
+    .auth-logo em { color: var(--gold-500); font-style: normal; }
+    .auth-tag { margin-top: 4px; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-mute); }
+    .auth-card h2 { font-size: 1.5rem; margin-top: 26px; }
+    .auth-card p.sub { font-size: 0.88rem; color: var(--text-mute); margin: 8px 0 24px; }
+    .google-btn {
+      width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 13px 18px; border-radius: 12px; border: 1px solid var(--line);
+      background: #fff; color: var(--text-strong); font-family: var(--font-ui); font-weight: 600;
+      font-size: 0.9rem; transition: all 0.18s ease;
+    }
+    .google-btn:hover { border-color: var(--gold-500); box-shadow: var(--shadow); transform: translateY(-1px); }
+    .google-btn svg { width: 18px; height: 18px; }
+    .denied-msg { color: var(--danger); font-size: 0.85rem; margin-top: 16px; }
+    .auth-loading { margin-top: 16px; font-size: 0.85rem; color: var(--text-mute); display: flex; align-items:center; justify-content:center; gap:8px; }
 
-    /* Toast */
+    /* ==================== LAYOUT ==================== */
+    .shell { display: flex; min-height: 100vh; }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px; background: linear-gradient(180deg, var(--navy-900), var(--navy-800));
+      color: #B9C6DC; flex-shrink: 0; display: flex; flex-direction: column;
+      padding: 26px 18px 20px; position: sticky; top: 0; height: 100vh;
+    }
+    .side-brand { display: flex; align-items: center; gap: 10px; padding: 0 10px 22px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .side-brand .logo-text { font-family: var(--font-heading); font-weight: 800; font-size: 1.2rem; color: #fff; }
+    .side-brand .logo-text em { color: var(--gold-400); font-style: normal; }
+    .side-brand small { display: block; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: #6E85A8; }
+
+    .nav-group { margin-top: 26px; }
+    .nav-group-label { font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; color: #5C7196; padding: 0 12px; margin-bottom: 8px; }
+    .nav-item {
+      width: 100%; display: flex; align-items: center; gap: 12px; padding: 11px 12px;
+      border-radius: 10px; color: #AEBBD2; font-family: var(--font-ui); font-weight: 500; font-size: 0.88rem;
+      transition: all 0.15s ease; margin-bottom: 2px;
+    }
+    .nav-item .ic { width: 18px; text-align: center; font-size: 1rem; }
+    .nav-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+    .nav-item.active { background: linear-gradient(90deg, var(--gold-500), var(--gold-600)); color: var(--navy-900); font-weight: 600; }
+
+    .side-foot { margin-top: auto; padding: 14px 12px 0; border-top: 1px solid rgba(255,255,255,0.08); }
+    .side-user { display:flex; align-items:center; gap:10px; }
+    .side-avatar { width:36px; height:36px; border-radius:50%; background: var(--gold-500); color: var(--navy-900); font-family:var(--font-ui); font-weight:700; display:flex; align-items:center; justify-content:center; font-size:0.85rem; }
+    .side-user .name { color:#fff; font-size:0.8rem; font-weight:600; line-height:1.1; }
+    .side-user .role { color:#7D93BA; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.08em; }
+    .signout-btn { margin-top: 14px; width:100%; padding:9px; border-radius:10px; border:1px solid rgba(255,255,255,0.15); color:#C4D0E4; font-family:var(--font-ui); font-weight:500; font-size:0.8rem; transition:all 0.15s ease; }
+    .signout-btn:hover { background: rgba(255,255,255,0.08); color:#fff; }
+
+    .side-foot .perm-note { margin-top:8px; text-align:center; color:#5C7196; font-size:0.62rem; }
+
+    /* Main */
+    .main { flex: 1; min-width: 0; padding: 32px 40px 60px; }
+    .page-head { margin-bottom: 28px; }
+    .page-head h1 { font-size: 1.7rem; }
+    .page-head p { color: var(--text-mute); font-size: 0.9rem; margin-top: 5px; }
+
+    /* ==================== CARDS / GRID ==================== */
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-bottom: 28px; }
+    .stat-card { background: var(--surface); border-radius: var(--radius); padding: 22px 24px; box-shadow: var(--shadow); border: 1px solid var(--line); }
+    .stat-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-mute); font-family: var(--font-ui); font-weight: 600; }
+    .stat-value { font-family: var(--font-heading); font-weight: 800; font-size: 1.9rem; margin-top: 6px; }
+    .stat-value.accent { color: var(--gold-600); }
+    .stat-card.loading .stat-value { color: var(--text-mute); opacity: 0.6; }
+
+    .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .panel {
+      background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow);
+      border: 1px solid var(--line); padding: 22px 24px;
+    }
+    .panel h3 { font-size: 1.05rem; margin-bottom: 4px; }
+    .panel .panel-sub { color: var(--text-mute); font-size: 0.8rem; margin-bottom: 18px; }
+    .chart-wrap { position: relative; height: 300px; }
+    @media (max-width: 1000px) { .chart-grid { grid-template-columns: 1fr; } }
+
+    /* ==================== TOOLBAR ==================== */
+    .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 20px; }
+    .search-input {
+      flex: 1; min-width: 220px; padding: 11px 16px; border: 1px solid var(--line); border-radius: 10px;
+      font-size: 0.9rem; background: var(--surface); color: var(--ink); outline: none;
+    }
+    .search-input:focus { border-color: var(--gold-500); box-shadow: 0 0 0 3px rgba(201,162,39,0.15); }
+    .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
+    .seg button { padding: 9px 16px; font-family: var(--font-ui); font-weight: 600; font-size: 0.78rem; color: var(--text-mute); background: transparent; }
+    .seg button + button { border-left: 1px solid var(--line); }
+    .seg button.active { background: var(--navy-800); color: #fff; }
+    .sort-btn { padding: 9px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); font-family: var(--font-ui); font-weight: 600; font-size: 0.78rem; color: var(--text-strong); }
+    .sort-btn:hover { border-color: var(--gold-500); }
+
+    /* ==================== TABLE ==================== */
+    .table-card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--line); overflow: hidden; }
+    .table-scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 760px; }
+    thead th {
+      text-align: left; padding: 14px 18px; background: var(--surface-2); font-family: var(--font-ui);
+      font-weight: 600; font-size: 0.68rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-mute);
+      border-bottom: 1px solid var(--line); white-space: nowrap; cursor: pointer; user-select: none;
+    }
+    thead th.sortable:hover { color: var(--gold-600); }
+    tbody td { padding: 16px 18px; border-bottom: 1px solid var(--surface-2); vertical-align: top; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: #FAFBFE; }
+    .q-name { font-weight: 600; font-family: var(--font-ui); font-size: 0.85rem; }
+    .q-ques { color: var(--text-mute); margin-top: 3px; line-height: 1.45; max-width: 420px; }
+    .q-ans { background: var(--surface-2); border-radius: 8px; padding: 8px 11px; margin-top: 8px; color: var(--ink); font-size: 0.8rem; line-height: 1.45; }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-family: var(--font-ui); font-weight: 600; font-size: 0.68rem; letter-spacing: 0.04em; }
+    .badge.new { background: #FCEFC6; color: #8A6D00; }
+    .badge.answered { background: #E3F2EA; color: var(--success); }
+    .badge.role-owner { background: var(--navy-800); color: #fff; }
+    .badge.role-editor { background: var(--gold-400); color: var(--navy-900); }
+    .badge.role-viewer { background: var(--surface-2); color: var(--text-mute); }
+    .time { color: var(--text-mute); font-size: 0.75rem; white-space: nowrap; }
+    .meta-line { font-size: 0.72rem; color: var(--text-mute); margin-top: 4px; }
+
+    /* Reply row */
+    .reply-row { display: flex; gap: 10px; align-items: flex-start; margin-top: 10px; }
+    .reply-row textarea {
+      flex: 1; min-height: 48px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px;
+      font-size: 0.82rem; resize: vertical; outline: none; color: var(--ink);
+    }
+    .reply-row textarea:focus { border-color: var(--gold-500); }
+    .reply-btn { padding: 9px 16px; border-radius: 10px; background: linear-gradient(90deg, var(--gold-500), var(--gold-600)); color: var(--navy-900); font-family: var(--font-ui); font-weight: 700; font-size: 0.8rem; white-space: nowrap; }
+    .reply-btn:hover { opacity: 0.92; }
+    .reply-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ==================== EMPTY / MISC ==================== */
+    .empty { text-align:center; color: var(--text-mute); padding: 60px 20px; font-size: 0.9rem; }
+    .empty .big { font-size: 2rem; margin-bottom: 8px; }
     .toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: var(--text-primary);
-      color: #fff;
-      padding: 12px 24px;
-      border-radius: var(--radius-pill);
-      font-family: var(--font-ui);
-      font-size: 0.85rem;
-      font-weight: 600;
-      opacity: 0;
-      transition: all 0.3s ease;
-      z-index: 9999;
-      pointer-events: none;
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px);
+      background: var(--navy-800); color: #fff; padding: 12px 24px; border-radius: 999px;
+      font-family: var(--font-ui); font-size: 0.82rem; font-weight: 600; opacity: 0; transition: all 0.3s ease;
+      z-index: 9999; pointer-events: none;
     }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-    .toast.show {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
+    .spinner {
+      width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color:#fff;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    @media (max-width: 768px) {
-      .admin-wrap { padding: 28px 16px 50px; }
-      .auth-card { margin-top: 80px; padding: 36px 24px; }
-      .auth-card h2 { font-size: 1.4rem; }
-      .dash-header { flex-direction: column; align-items: flex-start; gap: 8px; }
-      .dash-header h1 { font-size: 1.3rem; }
-      .filter-bar { gap: 6px; }
-      .filter-tab { font-size: 0.7rem; padding: 7px 14px; }
-      .stat-card { padding: 18px 20px; border-radius: 24px; }
-      .stat-value { font-size: 1.6rem; }
-    }
+    /* Team table */
+    .role-pill-edit { padding: 6px 10px; border-radius: 10px; border: 1px solid var(--line); font-size: 0.78rem; background: var(--surface); }
 
-    @media (max-width: 480px) {
-      html, body { overflow-y: auto; }
-      .admin-wrap { padding: 20px 12px 40px; }
-      .auth-card { margin-top: 50px; padding: 28px 16px; border-radius: 24px; }
-      .auth-card h2 { font-size: 1.2rem; }
-      .auth-card p { font-size: 0.82rem; }
-      .google-btn { font-size: 0.85rem; padding: 12px 28px; }
-      .dash-header h1 { font-size: 1.15rem; }
-      .dash-email { font-size: 0.72rem; }
-      .signout-btn { font-size: 0.7rem; padding: 7px 16px; }
-      .filter-tab { font-size: 0.65rem; padding: 6px 10px; }
-      .stat-card { padding: 14px 16px; border-radius: 20px; min-width: 100%; }
-      .stat-label { font-size: 0.62rem; }
-      .stat-value { font-size: 1.4rem; }
-      .question-card { padding: 16px 14px; border-radius: 20px; }
-      .q-header { flex-direction: column; align-items: flex-start; gap: 6px; }
-      .q-name { font-size: 0.95rem; }
-      .q-text { font-size: 0.85rem; }
-      .q-time { font-size: 0.7rem; }
-      .q-actions { flex-direction: column; }
-      .q-btn { width: 100%; text-align: center; font-size: 0.68rem; padding: 8px 14px; }
+    .empty-list { padding: 40px 20px; text-align:center; color: var(--text-mute); font-size: 0.9rem; }
+
+    @media (max-width: 820px) {
+      .shell { flex-direction: column; }
+      .sidebar { width: 100%; height: auto; position: static; padding: 16px; }
+      .nav-row { display: flex; flex-wrap: wrap; gap: 6px; }
+      .nav-item { width: auto; }
+      .side-foot { margin-top: 16px; }
+      .main { padding: 24px 16px 40px; }
+      .stat-grid { grid-template-columns: 1fr 1fr; }
     }
+    @media (max-width: 520px) { .stat-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
-
-  <!-- Auth screen -->
-  <div id="auth-screen">
+  <!-- ==================== AUTH ==================== -->
+  <div id="auth-screen" class="auth-wrap hidden">
     <div class="auth-card">
-      <h2>Team Alum Admin</h2>
-      <p>Sign in to view submitted questions.</p>
-      <button class="google-btn" id="google-login-btn">Sign in with Google</button>
+      <div class="auth-logo">Team <em>Alum</em></div>
+      <div class="auth-tag">Internal Dashboard</div>
+      <h2>Admin Console</h2>
+      <p class="sub">Sign in with Google to access the dashboard.</p>
+      <button class="google-btn" id="google-login-btn">
+        <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Sign in with Google
+      </button>
       <p class="denied-msg hidden" id="denied-msg">This account doesn't have access.</p>
+      <div class="auth-loading hidden" id="auth-loading"><span class="spinner"></span> Checking session…</div>
     </div>
   </div>
 
-  <!-- Dashboard (hidden until auth) -->
-  <div id="dashboard" class="admin-wrap hidden">
-    <div class="dash-header">
-      <h1>Team Alum — Questions</h1>
-      <div class="dash-meta">
-        <span class="dash-email" id="dash-email"></span>
+  <!-- ==================== SHELL ==================== -->
+  <div id="shell" class="shell hidden">
+    <aside class="sidebar">
+      <div class="side-brand">
+        <div>
+          <div class="logo-text">Team <em>Alum</em></div>
+          <small>Admin Dashboard</small>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <div class="nav-group">
+          <div class="nav-group-label">Menu</div>
+          <button class="nav-item" data-section="overview">
+            <span class="ic">◈</span><span>Overview</span>
+          </button>
+          <button class="nav-item" data-section="questions">
+            <span class="ic">❓</span><span>Questions</span>
+            <span class="new-badge hidden" id="nav-open-badge"></span>
+          </button>
+          <button class="nav-item" data-section="content">
+            <span class="ic">▤</span><span>Content</span>
+          </button>
+          <button class="nav-item" data-section="analytics">
+            <span class="ic">📈</span><span>Analytics</span>
+          </button>
+          <button class="nav-item" data-section="team">
+            <span class="ic">👥</span><span>Team</span>
+          </button>
+          <button class="nav-item" data-section="settings">
+            <span class="ic">⚙</span><span>Settings</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="side-foot">
+        <div class="side-user">
+          <div class="side-avatar" id="user-avatar">?</div>
+          <div>
+            <div class="name" id="user-email">…</div>
+            <div class="role" id="user-role">…</div>
+          </div>
+        </div>
         <button class="signout-btn" id="signout-btn">Sign out</button>
+        <div class="perm-note" id="perm-note"></div>
       </div>
-    </div>
+    </aside>
 
-    <div class="stats-row">
-      <div class="stat-card">
-        <span class="stat-label">Site Visitors</span>
-        <span class="stat-value loading" id="visits-count">&mdash;</span>
-        <button class="stat-refresh" id="visits-refresh" aria-label="Refresh visitor count" title="Refresh">&#8635;</button>
-      </div>
-    </div>
+    <main class="main">
+      <!-- ============ OVERVIEW ============ -->
+      <section id="section-overview" class="section hidden">
+        <div class="page-head">
+          <h1>Overview</h1>
+          <p>Your studio at a glance.</p>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-card loading"><span class="stat-label">Open Questions</span><span class="stat-value" id="ov-open">—</span></div>
+          <div class="stat-card loading"><span class="stat-label">Avg Response Time</span><span class="stat-value accent" id="ov-avg">—</span></div>
+          <div class="stat-card loading"><span class="stat-label">Visits This Week</span><span class="stat-value" id="ov-visits">—</span></div>
+          <div class="stat-card loading"><span class="stat-label">Total Questions</span><span class="stat-value" id="ov-total">—</span></div>
+        </div>
+        <div class="chart-grid">
+          <div class="panel">
+            <h3>Visits Over Time</h3>
+            <p class="panel-sub">Daily page views from <code>daily_visits</code></p>
+            <div class="chart-wrap"><canvas id="ov-visits-chart"></canvas></div>
+          </div>
+          <div class="panel">
+            <h3>Question Status</h3>
+            <p class="panel-sub">Breakdown from <code>question_stats</code></p>
+            <div class="chart-wrap"><canvas id="ov-status-chart"></canvas></div>
+          </div>
+        </div>
+      </section>
 
-    <div class="filter-bar">
-      <button class="filter-tab active" data-filter="all">All <span class="new-badge" id="badge-all"></span></button>
-      <button class="filter-tab" data-filter="new">New <span class="new-badge" id="badge-new"></span></button>
-      <button class="filter-tab" data-filter="answered">Answered</button>
-    </div>
+      <!-- ============ QUESTIONS ============ -->
+      <section id="section-questions" class="section hidden">
+        <div class="page-head">
+          <h1>Questions</h1>
+          <p>Review and answer visitor submissions.</p>
+        </div>
+        <div class="toolbar">
+          <input type="search" class="search-input" id="q-search" placeholder="Search name or question…">
+          <div class="seg" id="q-status-filter">
+            <button data-status="all" class="active">All</button>
+            <button data-status="new">New</button>
+            <button data-status="answered">Answered</button>
+          </div>
+          <button class="sort-btn" id="q-sort">Sort: Newest</button>
+        </div>
+        <div class="table-card" id="questions-table-wrap">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th data-sort="created_at">Date</th>
+                  <th>Request</th>
+                  <th>Answered</th>
+                  <th>By</th>
+                  <th>Response Time</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="questions-tbody">
+                <tr><td colspan="6"><div class="empty"><span class="big">⏳</span>Loading questions…</div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-    <div class="questions-list" id="questions-list">
-      <div class="empty-state" id="empty-state">No questions yet.</div>
-    </div>
+      <!-- ============ CONTENT ============ -->
+      <section id="section-content" class="section hidden">
+        <div class="page-head">
+          <h1>Content</h1>
+          <p>Engagement per deliverable. Scaffold — data will populate as tracking is added.</p>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-card"><span class="stat-label">Portfolio Views</span><span class="stat-value accent" id="content-portfolio">—</span></div>
+          <div class="stat-card"><span class="stat-label">E-book Opens</span><span class="stat-value accent" id="content-ebook">—</span></div>
+          <div class="stat-card"><span class="stat-label">Study-PDF Downloads</span><span class="stat-value accent" id="content-pdf">—</span></div>
+        </div>
+        <div class="panel">
+          <h3>About this section</h3>
+          <p class="panel-sub">Content engagement is tracked via the <code>content_views</code> table (<code>content_type</code>: portfolio / ebook / study-pdf). Use <code>trackContentView(id, type)</code> from <code>supabase-config.js</code> on the public site to start recording events.</p>
+        </div>
+      </section>
+
+      <!-- ============ ANALYTICS ============ -->
+      <section id="section-analytics" class="section hidden">
+        <div class="page-head">
+          <h1>Analytics</h1>
+          <p>Deep view of visits over time.</p>
+        </div>
+        <div class="panel">
+          <h3>Visits Over Time</h3>
+          <p class="panel-sub">Daily page views from <code>daily_visits</code></p>
+          <div class="chart-wrap"><canvas id="analytics-visits-chart"></canvas></div>
+        </div>
+      </section>
+
+      <!-- ============ TEAM ============ -->
+      <section id="section-team" class="section hidden">
+        <div class="page-head">
+          <h1>Team</h1>
+          <p>Manage member roles. Owners can edit roles; editors & viewers have read-only access here.</p>
+        </div>
+        <div class="table-card">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr><th>Member</th><th>Email</th><th>Role</th><th>Joined</th><th></th></tr>
+              </thead>
+              <tbody id="team-tbody">
+                <tr><td colspan="5"><div class="empty"><span class="big">👥</span>Loading team…</div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SETTINGS ============ -->
+      <section id="section-settings" class="section hidden">
+        <div class="page-head">
+          <h1>Settings</h1>
+          <p>Account &amp; application settings.</p>
+        </div>
+        <div class="panel">
+          <h3>Your Profile</h3>
+          <p class="panel-sub">Details below come from your Supabase profile.</p>
+          <table style="min-width:0">
+            <tbody id="settings-profile-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
   </div>
 
   <!-- Toast -->
   <div class="toast" id="toast"></div>
 
-  <script type="module">
-    import { supabase } from './supabase-config.js';
+  <!-- Chart.js (rendered client-side, wired to Supabase data) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
-    // ==================== DOM ====================
-    const authScreen = document.getElementById('auth-screen');
-    const dashboard = document.getElementById('dashboard');
-    const googleLoginBtn = document.getElementById('google-login-btn');
-    const signoutBtn = document.getElementById('signout-btn');
-    const dashEmail = document.getElementById('dash-email');
-    const questionsList = document.getElementById('questions-list');
-    const emptyState = document.getElementById('empty-state');
-    const deniedMsg = document.getElementById('denied-msg');
-    const toast = document.getElementById('toast');
-    const badgeAll = document.getElementById('badge-all');
-    const badgeNew = document.getElementById('badge-new');
-    const filterTabs = document.querySelectorAll('.filter-tab');
-
-    const ADMIN_EMAIL = 'socialsudarshan8@gmail.com';
-    let allQuestions = [];
-    let currentFilter = 'all';
-    let channel = null;
-    let visitsInterval = null;
-
-    // ==================== AUTH ====================
-    googleLoginBtn.addEventListener('click', async () => {
-      googleLoginBtn.textContent = 'Signing in...';
-      await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: window.location.origin + '/admin.html' }
-      });
-    });
-
-    signoutBtn.addEventListener('click', async () => {
-      await supabase.auth.signOut();
-      if (channel) supabase.removeChannel(channel);
-      if (visitsInterval) { clearInterval(visitsInterval); visitsInterval = null; }
-      allQuestions = [];
-      dashboard.classList.add('hidden');
-      authScreen.classList.remove('hidden');
-      authScreen.querySelector('.auth-card').style.display = '';
-    });
-
-    async function checkSession() {
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (!user) {
-        authScreen.classList.remove('hidden');
-        dashboard.classList.add('hidden');
-        return;
-      }
-
-      if (user.email !== ADMIN_EMAIL) {
-        await supabase.auth.signOut();
-        authScreen.classList.remove('hidden');
-        dashboard.classList.add('hidden');
-        deniedMsg.classList.remove('hidden');
-        googleLoginBtn.textContent = 'Sign in with Google';
-        return;
-      }
-
-      // Authorized
-      authScreen.classList.add('hidden');
-      dashboard.classList.remove('hidden');
-      dashEmail.textContent = user.email;
-      await loadQuestions();
-      subscribeRealtime();
-      await loadVisits();
-      if (!visitsInterval) visitsInterval = setInterval(loadVisits, 60000);
-    }
-
-    checkSession();
-
-    // ==================== VISITS ====================
-    async function loadVisits() {
-      const visitsCount = document.getElementById('visits-count');
-      try {
-        const { data, error } = await supabase
-          .from('site_stats')
-          .select('total_visits')
-          .eq('id', 1)
-          .single();
-
-        if (error) throw error;
-        visitsCount.textContent = Number(data.total_visits).toLocaleString();
-        visitsCount.classList.remove('loading');
-      } catch (err) {
-        console.error('Visits load error:', err);
-        visitsCount.textContent = '—';
-      }
-    }
-
-    document.getElementById('visits-refresh').addEventListener('click', async function () {
-      this.classList.add('spinning');
-      await loadVisits();
-      setTimeout(() => this.classList.remove('spinning'), 700);
-    });
-
-    // ==================== LOAD QUESTIONS ====================
-    async function loadQuestions() {
-      const { data, error } = await supabase
-        .from('questions')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Load error:', error);
-        showToast('Failed to load questions');
-        return;
-      }
-
-      allQuestions = data || [];
-      renderQuestions();
-    }
-
-    // ==================== REALTIME ====================
-    function subscribeRealtime() {
-      channel = supabase.channel('questions-changes')
-        .on('postgres_changes', {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'questions'
-        }, (payload) => {
-          allQuestions.unshift(payload.new);
-          renderQuestions();
-          showToast('New question received!');
-        })
-        .subscribe();
-    }
-
-    // ==================== RENDER ====================
-    function renderQuestions() {
-      const filtered = currentFilter === 'all'
-        ? allQuestions
-        : currentFilter === 'new'
-          ? allQuestions.filter(q => !q.answered)
-          : allQuestions.filter(q => q.answered);
-
-      const newCount = allQuestions.filter(q => !q.answered).length;
-      badgeAll.textContent = allQuestions.length || '';
-      badgeNew.textContent = newCount || '';
-
-      if (filtered.length === 0) {
-        questionsList.innerHTML = '';
-        questionsList.appendChild(emptyState);
-        emptyState.classList.remove('hidden');
-        emptyState.textContent = currentFilter === 'new'
-          ? 'No new questions.'
-          : currentFilter === 'answered'
-            ? 'No answered questions yet.'
-            : 'No questions yet.';
-        return;
-      }
-
-      emptyState.classList.add('hidden');
-      questionsList.innerHTML = '';
-
-      filtered.forEach(q => {
-        const card = document.createElement('div');
-        card.className = 'question-card' + (q.answered ? ' answered' : '');
-        card.innerHTML = `
-          <div class="q-header">
-            <span class="q-name">${escapeHtml(q.name)}</span>
-            <span class="q-status ${q.answered ? 'answered-badge' : 'new'}">${q.answered ? 'Answered' : 'New'}</span>
-          </div>
-          <p class="q-text">${escapeHtml(q.question)}</p>
-          <p class="q-time">${formatDate(q.created_at)}</p>
-          <div class="q-actions">
-            <button class="q-btn copy-btn" data-id="${q.id}" data-name="${escapeAttr(q.name)}" data-question="${escapeAttr(q.question)}">Copy for Story</button>
-            ${!q.answered ? `<button class="q-btn mark-btn" data-id="${q.id}">Mark as Answered</button>` : ''}
-          </div>
-        `;
-        questionsList.appendChild(card);
-      });
-
-      // Attach event listeners
-      questionsList.querySelectorAll('.copy-btn').forEach(btn => {
-        btn.addEventListener('click', async () => {
-          const text = `${btn.dataset.name}: "${btn.dataset.question}"`;
-          try {
-            await navigator.clipboard.writeText(text);
-            showToast('Copied to clipboard!');
-          } catch {
-            // Fallback
-            const ta = document.createElement('textarea');
-            ta.value = text;
-            document.body.appendChild(ta);
-            ta.select();
-            document.execCommand('copy');
-            document.body.removeChild(ta);
-            showToast('Copied to clipboard!');
-          }
-        });
-      });
-
-      questionsList.querySelectorAll('.mark-btn').forEach(btn => {
-        btn.addEventListener('click', async () => {
-          const id = btn.dataset.id;
-          const { error } = await supabase
-            .from('questions')
-            .update({ answered: true })
-            .eq('id', id);
-
-          if (error) {
-            console.error('Update error:', error);
-            showToast('Failed to mark as answered');
-            return;
-          }
-
-          const q = allQuestions.find(q => q.id === id);
-          if (q) q.answered = true;
-          renderQuestions();
-          showToast('Marked as answered');
-        });
-      });
-    }
-
-    // ==================== FILTERS ====================
-    filterTabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        filterTabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        currentFilter = tab.dataset.filter;
-        renderQuestions();
-      });
-    });
-
-    // ==================== HELPERS ====================
-    function formatDate(iso) {
-      const d = new Date(iso);
-      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      const month = months[d.getMonth()];
-      const day = d.getDate();
-      const year = d.getFullYear();
-      let hours = d.getHours();
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12 || 12;
-      const mins = d.getMinutes().toString().padStart(2, '0');
-      return `${month} ${day}, ${year} · ${hours}:${mins} ${ampm}`;
-    }
-
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
-
-    function escapeAttr(str) {
-      return str.replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
-
-    function showToast(msg) {
-      toast.textContent = msg;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2500);
-    }
-  </script>
-
+  <!-- Admin modules -->
+  <script type="module" src="admin/admin.js"></script>
 </body>
 </html>
