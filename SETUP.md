@@ -1,5 +1,9 @@
 # Team Alum — Setup & Deployment Guide
 
+> **Admin dashboard v2** — role-based access (owner / editor / viewer), questions
+> workflow with inline replies, and live analytics. Keep the existing stack
+> (Supabase + static HTML/JS on Vercel) and Google sign-in as the entry point.
+
 ## QUICK START (5 minutes)
 
 ### Step 1: Create Supabase Project
@@ -23,112 +27,240 @@ export const supabase = createClient(
 );
 ```
 
-### Step 4: Create the Database Table
-1. In Supabase dashboard → SQL Editor
-2. Paste and run this SQL:
+### Step 4: Create the Database Schema
+Open Supabase dashboard → SQL Editor → run the SQL in `schema.sql` (reproduced
+below). This creates all tables, RLS policies, and views the dashboard needs.
+
+---
+
+## DATABASE SCHEMA (`schema.sql`)
+
+Run this in the Supabase SQL editor **once**.
 
 ```sql
-create table questions (
+-- ============================================================
+-- 1. PROFILES (role-based access)
+--    role: 'owner' | 'editor' | 'viewer'
+-- ============================================================
+create table if not exists public.profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  email text not null unique,
+  role text not null default 'viewer' check (role in ('owner', 'editor', 'viewer')),
+  created_at timestamptz not null default now()
+);
+
+alter table public.profiles enable row level security;
+
+-- Anyone signed in can read the profiles list (needed for the Team page)
+create policy "Profiles are readable by authenticated users"
+on public.profiles for select to authenticated
+using (true);
+
+-- First-time sign-in can self-provision a viewer profile
+create policy "Users can create their own profile"
+on public.profiles for insert to authenticated
+with check (auth.uid() = id);
+
+-- Only the user themselves or an owner can update a profile
+create policy "Users can update their own profile"
+on public.profiles for update to authenticated
+using (auth.uid() = id);
+
+create policy "Owners can update any profile"
+on public.profiles for update to authenticated
+using (exists (
+  select 1 from public.profiles p
+  where p.id = auth.uid() and p.role = 'owner'
+));
+
+-- ---------------------------------------------------------------------------
+-- AUTO-CREATE A PROFILE WHEN A USER SIGNS IN (via trigger)
+-- ---------------------------------------------------------------------------
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  insert into public.profiles (id, email, role)
+  values (new.id, new.email, 'viewer')
+  on conflict (id) do nothing;
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+
+-- After creating this, add the FIRST owner manually:
+--   insert into public.profiles (id, email, role)
+--   select id, email, 'owner' from auth.users where email = 'you@example.com';
+
+-- ============================================================
+-- 2. QUESTIONS  (existing table, extended for the workflow)
+-- ============================================================
+create table if not exists public.questions (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   question text not null,
-  created_at timestamptz default now(),
-  answered boolean default false
+  answer text,
+  answered boolean not null default false,
+  answered_by uuid references auth.users(id),
+  answered_at timestamptz,
+  created_at timestamptz not null default now()
 );
 
-alter table questions enable row level security;
+alter table public.questions enable row level security;
 
+-- Anyone (incl. anonymous visitors) can submit a question
 create policy "Anyone can insert a question"
-on questions for insert
-to anon
+on public.questions for insert to anon, authenticated
 with check (true);
 
-create policy "Only admin can read questions"
-on questions for select
-to authenticated
-using (auth.jwt() ->> 'email' = 'socialsudarshan8@gmail.com');
+-- Any signed-in profile (owner/editor/viewer) can read questions
+create policy "Authenticated users can read questions"
+on public.questions for select to authenticated
+using (exists (
+  select 1 from public.profiles p where p.id = auth.uid()
+));
 
-create policy "Only admin can update questions"
-on questions for update
-to authenticated
-using (auth.jwt() ->> 'email' = 'socialsudarshan8@gmail.com');
+-- Owners and editors can answer questions
+create policy "Owners and editors can update questions"
+on public.questions for update to authenticated
+using (exists (
+  select 1 from public.profiles p
+  where p.id = auth.uid() and p.role in ('owner', 'editor')
+));
+
+-- ============================================================
+-- 3. PAGE_VIEWS  (lightweight visitor tracking)
+-- ============================================================
+create table if not exists public.page_views (
+  id bigint generated always as identity primary key,
+  page text not null,
+  visitor_id uuid,
+  referrer text,
+  created_at timestamptz not null default now()
+);
+
+alter table public.page_views enable row level security;
+
+-- Public visitors can record a page view (no read access)
+create policy "Anyone can record a page view"
+on public.page_views for insert to anon, authenticated
+with check (true);
+
+-- Only authenticated staff can read page views / analytics
+create policy "Staff can read page views"
+on public.page_views for select to authenticated
+using (exists (
+  select 1 from public.profiles p where p.id = auth.uid()
+));
+
+-- ============================================================
+-- 4. CONTENT_VIEWS  (scaffold for Content section analytics)
+-- ============================================================
+create table if not exists public.content_views (
+  id bigint generated always as identity primary key,
+  content_id text,
+  content_type text,   -- 'portfolio' | 'ebook' | 'study-pdf'
+  visitor_id uuid,
+  created_at timestamptz not null default now()
+);
+
+alter table public.content_views enable row level security;
+
+create policy "Anyone can record a content view"
+on public.content_views for insert to anon, authenticated
+with check (true);
+
+create policy "Staff can read content views"
+on public.content_views for select to authenticated
+using (exists (
+  select 1 from public.profiles p where p.id = auth.uid()
+));
+
+-- ============================================================
+-- 5. VIEWS (analytics)
+-- ============================================================
+
+-- Question stats: counts by status + average response time (hours)
+create or replace view public.question_stats as
+select
+  count(*) filter (where not answered)          as open_count,
+  count(*) filter (where answered)              as answered_count,
+  count(*)                                      as total_count,
+  round(avg(
+    case when answered_at is not null
+    then extract(epoch from (answered_at - created_at)) / 3600.0
+    end
+  )::numeric, 2)                                as avg_response_hours
+from public.questions;
+
+-- Daily visits grouped by day
+create or replace view public.daily_visits as
+select
+  (created_at at time zone 'utc')::date as day,
+  count(*)                              as visits
+from public.page_views
+group by day
+order by day;
+
+-- Visitors this week (helper view)
+create or replace view public.visits_this_week as
+select count(*) as visits
+from public.page_views
+where created_at >= date_trunc('week', now()) - interval '7 days';
 ```
 
-### Step 4b: Enable the Visitor Counter
-1. In Supabase dashboard → SQL Editor → New query
-2. Open `visits-setup.sql`, copy **all** of it, paste and run
-
-This creates a `site_stats` table and an `increment_visits()` function. The main site automatically counts each visit (once per browser session) — no extra code needed.
-
-To see the count: sign in at `/admin.html` → "Site Visitors" card (auto-refreshes every 60s, or click ↻).
+> **Note on views + RLS:** The analytics views are created with
+> `security_invoker = true`, so they apply the invoking role's RLS on the
+> underlying tables (they never bypass RLS). They are then granted to the
+> `authenticated` role via PostgREST:
+> ```sql
+> grant select on public.question_stats   to authenticated;
+> grant select on public.daily_visits     to authenticated;
+> grant select on public.visits_this_week to authenticated;
+> ```
 
 ### Step 5: Enable Google OAuth (for admin login)
-1. Go to https://console.cloud.google.com
-2. Create a new project (or use existing) → name it anything (e.g. "team-alum-auth")
-3. Go to APIs & Services → Credentials → Create Credentials → OAuth client ID
-4. Application type: **Web application**
-5. Name: "Team Alum Admin"
-6. Under **Authorized redirect URIs**, paste:
+1. Go to https://console.cloud.google.com → create a project (`team-alum-auth`)
+2. APIs & Services → Credentials → Create Credentials → OAuth client ID
+3. Application type: **Web application**
+4. Under **Authorized redirect URIs**, paste:
    ```
    https://YOUR_PROJECT_REF.supabase.co/auth/v1/callback
    ```
-   (Replace YOUR_PROJECT_REF with your Supabase project reference from the URL)
-7. Click Create → Copy the **Client ID** and **Client Secret**
-8. Go back to Supabase dashboard → Authentication → Providers → Google
-9. Enable Google → Paste the Client ID and Client Secret → Save
-10. Go to Authentication → URL Configuration:
-    - Site URL: `https://your-deployed-domain.com` (or `http://localhost:3000` for testing)
-    - Redirect URLs: add `https://your-deployed-domain.com/admin.html`
+5. Copy the **Client ID** and **Client Secret**
+6. In Supabase: Authentication → Providers → Google → enable, paste credentials
+7. Authentication → URL Configuration:
+   - Site URL: `https://your-deployed-domain.com`
+   - Redirect URLs: `https://your-deployed-domain.com/admin.html`
+
+### Step 6: Assign your first deputy
+After signing in once with Google (a profile is auto-created with `viewer`),
+promote yourself to owner in the SQL editor:
+```sql
+update public.profiles set role = 'owner' where email = 'your-email@gmail.com';
+```
 
 ---
 
 ## DEPLOYMENT
 
 ### Option A: Vercel (Recommended — Free)
-1. Push your code to GitHub:
-   ```bash
-   cd team-alum
-   git init
-   git add .
-   git commit -m "Team Alum website"
-   git remote add origin https://github.com/YOUR_USERNAME/team-alum.git
-   git push -u origin main
-   ```
-2. Go to https://vercel.com → Sign in with GitHub
-3. Import your `team-alum` repository
-4. Click Deploy — done!
-5. Your site is live at `https://team-alum.vercel.app`
+1. Push your code to GitHub, then import the repo in Vercel and click Deploy.
+2. Site live at `https://team-alum.vercel.app`
 
-### Option B: Netlify (Free)
-1. Push to GitHub (same as above)
-2. Go to https://app.netlify.com → Add new site → Import from Git
-3. Select your repository → Deploy
-4. Your site is live at `https://team-alum.netlify.app`
+The shared `supabase-config.js` is served with `Cache-Control: no-cache` so key
+changes propagate (already configured in `vercel.json`).
 
-### Option C: GitHub Pages (Free)
-1. Push to GitHub
-2. Go to repo Settings → Pages → Source: Deploy from branch `main`
-3. Your site is live at `https://YOUR_USERNAME.github.io/team-alum/`
-
----
-
-## AFTER DEPLOYMENT
-
-### Update Supabase Auth URLs
-1. Go to Supabase → Authentication → URL Configuration
-2. Set **Site URL** to your deployed domain
-3. Add your domain to **Redirect URLs**: `https://your-domain.com/admin.html`
-
-### Test the Admin Dashboard
-1. Visit `https://your-domain.com/admin.html`
-2. Click "Sign in with Google"
-3. Sign in with `socialsudarshan8@gmail.com`
-4. You should see the questions dashboard
-
-### Test the Ask Us Form
-1. Visit your main site → Ask Us page
-2. Submit a test question
-3. Go to admin.html → the question should appear
+### SEO / Exposure (already handled in this repo)
+- `robots.txt` disallows `/admin.html` and `/admin`.
+- `/admin.html` is **not** linked from the public nav and is **not** in
+  `sitemap.xml`.
 
 ---
 
@@ -136,25 +268,29 @@ To see the count: sign in at `/admin.html` → "Site Visitors" card (auto-refres
 ```
 team-alum/
 ├── index.html          # Main site (6 pages)
-├── style.css           # All styles
-├── script.js           # Page transitions, forms, animations
-├── admin.html          # Admin dashboard (private)
-├── supabase-config.js  # Supabase credentials (EDIT THIS)
-├── vercel.json         # Vercel deployment config
-├── _redirects          # Netlify deployment config
+├── style.css           # Public site styles
+├── script.js           # Public site JS (incl. page_views tracking)
+├── admin.html          # Admin dashboard shell (sidebar + auth gate)
+├── admin/
+│   ├── admin.js        # Auth, routing, nav, role gate, bootstrapping
+│   ├── admin-questions.js
+│   ├── admin-analytics.js
+│   ├── admin-content.js
+│   ├── admin-team.js
+│   └── admin-settings.js
+├── supabase-config.js  # Supabase credentials + shared helpers
+├── schema.sql          # Full DB schema (run in Supabase SQL editor)
+├── robots.txt          # Disallows /admin.html
+├── sitemap.xml         # Public pages only
+├── vercel.json
+├── _redirects
 └── SETUP.md            # This file
 ```
 
 ## LOCAL TESTING
-To test locally, you need a simple HTTP server (ES modules require it):
 ```bash
-# Option 1: Python
 python -m http.server 3000
-
-# Option 2: Node.js
+# or
 npx serve .
-
-# Option 3: PHP
-php -S localhost:3000
 ```
-Then open `http://localhost:3000`
+Then open `http://localhost:3000` and `http://localhost:3000/admin.html`.

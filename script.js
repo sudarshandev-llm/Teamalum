@@ -290,23 +290,22 @@
     }
   });
 
-  // ==================== VISIT TRACKING ====================
-  async function trackVisit() {
-    try {
-      if (sessionStorage.getItem('ta_visit_tracked')) return;
-      sessionStorage.setItem('ta_visit_tracked', '1');
-      const { supabase } = await import('./supabase-config.js');
-      await supabase.rpc('increment_visits');
-    } catch (err) {
-      console.warn('Visit tracking failed:', err);
-    }
-  }
-  trackVisit();
-
   // ==================== INITIAL STATE ====================
   // Ensure first page is visible immediately
   pages[0].classList.add('active');
   pages[0].style.opacity = '1';
   pages[0].style.pointerEvents = 'auto';
+
+  // ==================== PAGE VIEW TRACKING ====================
+  // Fire-and-forget: never blocks or breaks the page.
+  (async () => {
+    try {
+      const { trackPageView } = await import('./supabase-config.js');
+      const page = document.querySelector('.page.active')?.dataset?.page || 'home';
+      await trackPageView(page);
+    } catch (err) {
+      console.warn('Failed to track page view:', err);
+    }
+  })();
 
 })();
