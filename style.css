@@ -93,6 +93,7 @@ h1, h2, h3, h4, p, span, button, a {
   color: var(--text-secondary);
   box-shadow: 4px 4px 10px var(--shadow-dark), -4px -4px 10px var(--shadow-light);
   transition: all 0.25s ease; white-space: nowrap; user-select: none; position: relative;
+  text-decoration: none; display: inline-flex; align-items: center; justify-content: center;
 }
 
 .nav-pill:hover {
@@ -102,6 +103,13 @@ h1, h2, h3, h4, p, span, button, a {
 }
 
 .nav-pill:active { transform: translateY(0); box-shadow: var(--neo-inset); }
+
+.nav-pill.nav-link-pill {
+  background: var(--accent-mint);
+  color: var(--text-primary);
+}
+
+.nav-pill.nav-link-pill:hover { color: var(--text-primary); background: #8fd9b4; }
 
 .nav-pill.active { box-shadow: var(--neo-inset); background: var(--accent-lavender); color: #fff; }
 
