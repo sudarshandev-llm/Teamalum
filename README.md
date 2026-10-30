@@ -32,7 +32,7 @@ Rather than chasing bloated trends or artificial hype, Team Alum was founded on 
 
 ## 👥 The Minds Behind the Mission
 
-Team Alum is driven and spearheaded by two passionate young developers who combine product vision, AI engineering, and hands-on systems architecture:
+Team Alum is driven and spearheaded by two passionate young developers who combine product vision, AI applications development, and hands-on systems architecture:
 
 <div align="center">
 <table>
@@ -42,10 +42,10 @@ Team Alum is driven and spearheaded by two passionate young developers who combi
       <sub><b>Sudarshan Sunil Hadmode</b></sub><br />
       <b>Founder & Lead Architect</b><br />
       <p align="left">
-        A 17-year-old AI Engineer and Prompt Engineer working across full-stack development (frontend, backend) and UI/UX design. Sudarshan bridges human-centered design with robust software architecture, transforming conceptual ideas into clean, reliable, and high-impact digital experiences.
+        A 17-year-old Alumni AI Developer and Prompt Engineer working across full-stack development (frontend, backend) and UI/UX design. Sudarshan bridges human-centered design with robust software architecture, transforming conceptual ideas into clean, reliable, and high-impact digital experiences.
       </p>
       <sub>
-        <code>AI Engineering</code> • <code>Full Stack</code> • <code>UI/UX Design</code> • <code>Prompt Engineering</code>
+        <code>Alumni AI Systems</code> • <code>Full Stack</code> • <code>UI/UX Design</code> • <code>Prompt Engineering</code>
       </sub><br /><br />
       <a href="https://github.com/sudarshandev-llm">GitHub</a> • 
       <a href="https://www.instagram.com/sudarshan.css/">Instagram</a>
